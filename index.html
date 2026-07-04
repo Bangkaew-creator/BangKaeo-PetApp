@@ -1,0 +1,59 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ระบบลงทะเบียนสุนัขและแมว</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="login-container">
+        <!-- โลโก้และชื่อหน่วยงาน -->
+        <div class="logo-box">
+            <!-- หมายเหตุ: เปลี่ยนลิงก์ภาพด้านล่างเป็นโลโก้ของหน่วยงานจริงในภายหลัง -->
+            <img src="https://upload.wikimedia.org/wikipedia/th/thumb/e/e9/Seal_of_Samut_Prakan.png/150px-Seal_of_Samut_Prakan.png" alt="Logo">
+        </div>
+        <h1 class="title-main">เทศบาลเมืองบางแก้ว</h1>
+        <p class="subtitle">ระบบลงทะเบียนสุนัขและแมว</p>
+
+        <!-- กล่องลงทะเบียน Neumorphic -->
+        <div class="card-neumorphic">
+            
+            <div class="input-group">
+                <label class="input-label">เลขที่บ้าน (House Number)</label>
+                <!-- ช่องกรอกข้อมูลใช้เงาแบบ Inset -->
+                <input type="text" class="input-field" placeholder="🏠 เช่น 123/45" id="houseNumber">
+            </div>
+
+            <div class="input-group">
+                <label class="input-label">หมู่ที่ (Village/Moo)</label>
+                <select class="input-field select-field" id="mooNumber">
+                    <option value="" disabled selected>📍 เลือกหมู่</option>
+                    <option value="1">หมู่ 1</option>
+                    <option value="2">หมู่ 2</option>
+                    <option value="3">หมู่ 3</option>
+                    <option value="4">หมู่ 4</option>
+                    <option value="5">หมู่ 5</option>
+                </select>
+            </div>
+
+            <div class="checkbox-group">
+                <input type="checkbox" id="isRented" class="checkbox-neumorphic">
+                <label for="isRented" class="checkbox-label">เป็นบ้านเช่า/ห้องเช่า หรือต้องการแยกข้อมูลจากเจ้าของบ้านเดิม</label>
+            </div>
+
+            <!-- ปุ่มกดใช้เงาแบบ Extruded และเมื่อกดจะยุบตัวเป็น Inset -->
+            <button class="btn-primary" id="loginBtn">
+                เข้าสู่ระบบ / ลงทะเบียน 
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+            </button>
+            
+        </div>
+
+        <p class="footer-text">© 2026 Bang Kaeo Municipality. All Rights Reserved.<br><br><span style="opacity: 0.5;">Staff Login</span></p>
+    </div>
+<script type="module" src="app.js"></script>
+</body>
+</html>

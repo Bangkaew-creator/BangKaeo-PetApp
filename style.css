@@ -1,0 +1,195 @@
+/* style.css */
+@import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap');
+
+:root {
+  /* Colors */
+  --bg-color: #F0F2F5;
+  --primary-color: #031935;
+  --secondary-color: #fed65b;
+  --text-main: #1b1b1e;
+  --text-muted: #75777e;
+  
+  /* Neumorphism Shadows */
+  --shadow-extruded: 9px 9px 16px #D1D9E6, -9px -9px 16px #FFFFFF;
+  --shadow-inset: inset 6px 6px 12px #D1D9E6, inset -6px -6px 12px #FFFFFF;
+  
+  /* Border Radius */
+  --radius-sm: 8px;
+  --radius-md: 16px;
+  --radius-pill: 9999px;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Be Vietnam Pro', sans-serif;
+}
+
+body {
+  background-color: var(--bg-color);
+  color: var(--text-main);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 16px;
+}
+
+.login-container {
+  width: 100%;
+  max-width: 400px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Header & Logo */
+.logo-box {
+  width: 80px;
+  height: 80px;
+  background-color: var(--bg-color);
+  border-radius: 50%;
+  box-shadow: var(--shadow-extruded);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.logo-box img {
+  width: 60px;
+  height: 60px;
+  object-fit: contain;
+}
+
+.title-main {
+  color: var(--primary-color);
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 8px;
+  text-align: center;
+}
+
+.subtitle {
+  color: var(--text-muted);
+  font-size: 16px;
+  margin-bottom: 32px;
+  text-align: center;
+}
+
+/* Login Card */
+.card-neumorphic {
+  background-color: var(--bg-color);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-extruded);
+  padding: 32px 24px;
+  width: 100%;
+}
+
+.input-group {
+  margin-bottom: 24px;
+}
+
+.input-label {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-main);
+  margin-bottom: 8px;
+}
+
+.input-field {
+  width: 100%;
+  padding: 14px 16px;
+  background-color: var(--bg-color);
+  border: none;
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-inset);
+  color: var(--text-main);
+  font-size: 16px;
+  outline: none;
+  transition: all 0.3s ease;
+}
+
+.input-field:focus {
+  border: 1px solid var(--primary-color);
+}
+
+.select-field {
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23031935' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 16px center;
+  background-size: 16px;
+}
+
+/* Checkbox */
+.checkbox-group {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 32px;
+  gap: 12px;
+}
+
+.checkbox-neumorphic {
+  appearance: none;
+  width: 24px;
+  height: 24px;
+  min-width: 24px;
+  background-color: var(--bg-color);
+  border-radius: 4px;
+  box-shadow: var(--shadow-inset);
+  outline: none;
+  cursor: pointer;
+  position: relative;
+}
+
+.checkbox-neumorphic:checked::after {
+  content: '✓';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: var(--primary-color);
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.checkbox-label {
+  font-size: 14px;
+  color: var(--text-muted);
+  line-height: 1.5;
+  cursor: pointer;
+}
+
+/* Button */
+.btn-primary {
+  width: 100%;
+  padding: 16px;
+  background-color: var(--secondary-color);
+  color: var(--primary-color);
+  border: none;
+  border-radius: var(--radius-sm);
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: var(--shadow-extruded);
+  transition: all 0.2s ease;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-primary:active {
+  box-shadow: var(--shadow-inset);
+  transform: translateY(2px);
+}
+
+.footer-text {
+  margin-top: 32px;
+  text-align: center;
+  font-size: 12px;
+  color: var(--text-muted);
+}
