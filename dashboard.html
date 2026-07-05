@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>แดชบอร์ดประชาชน - ระบบลงทะเบียนสุนัขและแมว</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="dashboard-container">
+        <header class="dash-header">
+            <div>
+                <h2 class="title-main" style="font-size: 18px; text-align: left;">บ้านเลขที่ <span id="displayHouseNo">-</span></h2>
+                <p class="subtitle" style="text-align: left; margin-bottom: 0;">หมู่ที่ <span id="displayMoo">-</span></p>
+            </div>
+            <button id="logoutBtn" class="btn-primary" style="width: auto; padding: 10px 16px; font-size: 14px;">ออกระบบ</button>
+        </header>
+
+        <div class="card-neumorphic" style="margin-bottom: 24px; padding: 20px;">
+            <h3 class="input-label">สัดส่วนวัคซีนในหมู่บ้าน (เป้าหมาย 80%)</h3>
+            <div class="progress-track">
+                <div class="progress-fill" style="width: 65%;">65%</div>
+            </div>
+            <div style="display: flex; justify-content: space-between; margin-top: 12px;">
+                <p class="footer-text" style="margin-top: 0;">สุนัข-เมีย ทำหมัน: 45%</p>
+                <p class="footer-text" style="margin-top: 0;">แมว-ผู้ ทำหมัน: 30%</p>
+            </div>
+        </div>
+
+        <h3 class="input-label" style="font-size: 16px;">สัตว์เลี้ยงของคุณ</h3>
+        <div id="petList">
+            
+            <div class="flip-card">
+                <div class="flip-card-inner">
+                    <div class="flip-card-front card-neumorphic">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <h4 style="color: var(--primary-color); font-size: 18px;">🐶 เจ้าตูบ</h4>
+                            <span style="background: #d4edda; color: #155724; padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold;">ปกติ</span>
+                        </div>
+                        <p class="text-muted" style="font-size: 14px; margin-top: 12px; text-align: left;">เพศ: สุนัข-ผู้ | สถานะ: ทำหมันแล้ว</p>
+                        <p class="text-muted" style="font-size: 14px; text-align: left;">วัคซีนล่าสุด: 15/05/2568</p>
+                        <button class="btn-primary flip-btn" style="margin-top: 16px; padding: 10px;">พลิกดูใบรับรองวัคซีน 🔄</button>
+                    </div>
+                    <div class="flip-card-back card-neumorphic cert-bg">
+                        <h4 style="color: var(--primary-color); border-bottom: 1px dashed var(--primary-color); padding-bottom: 8px;">ใบรับรองการฉีดวัคซีน</h4>
+                        <p class="text-muted" style="font-size: 14px; margin-top: 12px; text-align: left;"><strong>Lot No:</strong> VAX-2025-001</p>
+                        <p class="text-muted" style="font-size: 14px; text-align: left;"><strong>Exp Date:</strong> 15/05/2569</p>
+                        <p class="text-muted" style="font-size: 12px; margin-top: 12px; text-align: left; color: #d9534f;">* กรุณานำสัตว์เลี้ยงมารับวัคซีนกระตุ้นในครั้งต่อไปตามกำหนด</p>
+                        <button class="btn-primary flip-btn" style="margin-top: auto; padding: 10px; background-color: var(--primary-color); color: white;">กลับด้านหน้า ↩️</button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <button class="fab-button" id="addPetBtn">+</button>
+    </div>
+
+    <script>
+        // ดึงข้อมูลที่จำไว้มาแสดง
+        document.getElementById("displayHouseNo").innerText = localStorage.getItem("userHouseNo") || "-";
+        document.getElementById("displayMoo").innerText = localStorage.getItem("userMoo") || "-";
+
+        // ฟังก์ชันล็อกเอาท์
+        document.getElementById("logoutBtn").addEventListener("click", () => {
+            localStorage.clear();
+            window.location.href = "index.html";
+        });
+
+        // สคริปต์สำหรับการพลิกการ์ด
+        document.querySelectorAll('.flip-btn').forEach(button => {
+            button.addEventListener('click', function() {
+                this.closest('.flip-card').classList.toggle('flipped');
+            });
+        });
+    </script>
+</body>
+</html>
