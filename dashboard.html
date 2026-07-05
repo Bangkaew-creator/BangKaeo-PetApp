@@ -98,15 +98,15 @@
                     const pet = doc.data();
                     const petId = doc.id;
                     
-                    // 1. แยกไอคอนตามประเภทสัตว์
                     const animalIcon = pet.petType === 'แมว' ? '🐈' : '🐕';
                     
-                    // 2. ป้ายสัญลักษณ์ไอคอนเพศ
+                    // เพิ่มป้ายประเภทสัตว์เลี้ยงกลับเข้ามา (ป้ายสีเทา)
+                    const typeBadge = `<span class="badge-pill badge-gray">${animalIcon} ${pet.petType}</span>`;
+
                     const genderBadge = pet.petGender === 'ผู้' 
                         ? `<span class="badge-pill" style="background-color: #e3f2fd; color: #1565c0; border: 1px solid #bbdefb;">♂️ เพศผู้</span>` 
                         : `<span class="badge-pill" style="background-color: #fce4ec; color: #c2185b; border: 1px solid #f8bbd0;">♀️ เพศเมีย</span>`;
                     
-                    // 3. ป้ายสถานะวัคซีนและการทำหมัน
                     const vaxBadge = pet.isVaccinated 
                         ? `<span class="badge-pill badge-green">💉 เคยฉีด</span>` 
                         : `<span class="badge-pill badge-red">⚠️ ยังไม่ฉีด</span>`;
@@ -138,6 +138,7 @@
                                 <h4 style="color: var(--primary-color); font-size: 22px; margin-bottom: 12px;">${pet.petName}</h4>
                                 
                                 <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; margin-bottom: 20px;">
+                                    ${typeBadge}
                                     ${genderBadge}
                                     ${vaxBadge}
                                     ${neuterBadge}
