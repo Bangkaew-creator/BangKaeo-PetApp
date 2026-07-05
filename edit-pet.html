@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>อัปเดตข้อมูลสัตว์เลี้ยง</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="dashboard-container" style="padding-top: 20px;">
+        
+        <div style="display: flex; align-items: center; margin-bottom: 24px;">
+            <button id="backBtn" class="btn-primary" style="width: 50px; height: 50px; border-radius: 50%; padding: 0;">🔙</button>
+            <h2 class="title-main" style="margin-left: 16px; margin-bottom: 0;">อัปเดตข้อมูล</h2>
+        </div>
+
+        <div class="card-neumorphic">
+            <div class="input-group">
+                <label class="input-label">ชื่อสัตว์เลี้ยง</label>
+                <input type="text" id="displayPetName" class="input-field" disabled style="background-color: #e4e2e5;">
+            </div>
+
+            <hr style="border: 0; border-top: 1px dashed var(--outline-variant); margin: 24px 0;">
+
+            <div class="input-group">
+                <label class="input-label" style="color: #d9534f;">สถานะของสัตว์เลี้ยง</label>
+                <select id="petStatus" class="input-field select-field">
+                    <option value="active">🟢 ปกติ (อาศัยอยู่ ณ ปัจจุบัน)</option>
+                    <option value="deceased">⚫ เสียชีวิตแล้ว</option>
+                    <option value="moved">🔵 ย้ายที่อยู่ / เปลี่ยนเจ้าของ</option>
+                </select>
+            </div>
+
+            <hr style="border: 0; border-top: 1px dashed var(--outline-variant); margin: 24px 0;">
+
+            <h3 class="input-label">อัปเดตประวัติวัคซีน</h3>
+            <div class="checkbox-group" style="margin-bottom: 16px;">
+                <input type="checkbox" id="isVaccinated" class="checkbox-neumorphic">
+                <label for="isVaccinated" class="checkbox-label">ได้รับวัคซีนในปีนี้แล้ว</label>
+            </div>
+
+            <div id="vaccineDetails" style="display: none;">
+                <div class="input-group">
+                    <label class="input-label">Lot Number ของวัคซีน</label>
+                    <input type="text" id="vaccineLot" class="input-field" placeholder="เช่น VAX-2026-01">
+                </div>
+                <div class="input-group">
+                    <label class="input-label">วันที่วัคซีนหมดอายุ (Exp Date)</label>
+                    <input type="date" id="vaccineExp" class="input-field">
+                </div>
+            </div>
+
+            <button id="saveUpdateBtn" class="btn-primary" style="margin-top: 24px;">
+                💾 บันทึกการเปลี่ยนแปลง
+            </button>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+        import { getFirestore, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCNsfEd11Yv2kNCO_T3s07WJ1eAXUyhssE",
+            authDomain: "bangkaew-pet-db.firebaseapp.com",
+            projectId: "bangkaew-pet-db",
+            storageBucket: "bangkaew-pet-db.firebasestorage.app",
+            messagingSenderId: "79581962937",
+            appId: "1:79581962937:web:1a50ce4c7fe42340cc7168"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // ดึงรหัสสัตว์เลี้ยง (ID) จาก URL 
+        const urlParams = new URLSearchParams(window.location.search);
+        const petId = urlParams.get('id');
+
+        const backBtn = document.getElementById("backBtn");
+        const saveBtn = document.getElementById("saveUpdateBtn");
+        const isVaccinatedCheckbox = document.getElementById("isVaccinated");
+        const vaccineDetailsDiv = document.getElementById("vaccineDetails");
+
+        // ถ้าระบุ ID ไม่ได้ ให้กลับไปหน้าแรก
+        if(!petId) {
+            alert("ไม่พบข้อมูลสัตว์เลี้ยง");
+            window.location.href = "dashboard.html";
+        }
+
+        backBtn.addEventListener("click", () => window.location.href = "dashboard.html");
+
+        // แสดง/ซ่อน กล่องกรอก Lot วัคซีน
+        isVaccinatedCheckbox.addEventListener("change", (e) => {
+            vaccineDetailsDiv.style.display = e.target.checked ? "block" : "none";
+        });
+
+        // ฟังก์ชันดึงข้อมูลสัตว์เลี้ยงตัวนี้มาแสดง
+        async function loadPetData() {
+            const petRef = doc(db, "Pets", petId);
+            const petSnap = await getDoc(petRef);
+
+            if (petSnap.exists()) {
+                const data = petSnap.data();
+                document.getElementById("displayPetName").value = data.petName;
+                document.getElementById("petStatus").value = data.status || "active";
+                
+                if (data.isVaccinated) {
+                    isVaccinatedCheckbox.checked = true;
+                    vaccineDetailsDiv.style.display = "block";
+                    document.getElementById("vaccineLot").value = data.vaccineLot || "";
+                    document.getElementById("vaccineExp").value = data.vaccineExp || "";
+                }
+            }
+        }
+
+        // ฟังก์ชันบันทึกข้อมูลที่แก้ไข
+        saveBtn.addEventListener("click", async () => {
+            saveBtn.innerHTML = "กำลังอัปเดต...";
+            try {
+                const petRef = doc(db, "Pets", petId);
+                await updateDoc(petRef, {
+                    status: document.getElementById("petStatus").value,
+                    isVaccinated: isVaccinatedCheckbox.checked,
+                    vaccineLot: isVaccinatedCheckbox.checked ? document.getElementById("vaccineLot").value : "",
+                    vaccineExp: isVaccinatedCheckbox.checked ? document.getElementById("vaccineExp").value : "",
+                    lastUpdated: new Date()
+                });
+                
+                alert("✅ อัปเดตข้อมูลสำเร็จ!");
+                window.location.href = "dashboard.html";
+            } catch (error) {
+                console.error(error);
+                alert("❌ เกิดข้อผิดพลาด: " + error.message);
+                saveBtn.innerHTML = "💾 บันทึกการเปลี่ยนแปลง";
+            }
+        });
+
+        // โหลดข้อมูลเมื่อเปิดหน้าเว็บ
+        loadPetData();
+    </script>
+</body>
+</html>
