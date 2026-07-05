@@ -28,7 +28,6 @@
         </div>
 
         <h3 class="input-label" style="font-size: 16px;">สัตว์เลี้ยงของคุณ</h3>
-        
         <div id="petList">
             <p style="text-align: center; color: var(--text-muted); margin-top: 20px;">กำลังโหลดข้อมูล...</p>
         </div>
@@ -52,49 +51,44 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // ดึงเลขที่บ้านจากหน่วยความจำ
         const houseNo = localStorage.getItem("userHouseNo");
         const moo = localStorage.getItem("userMoo");
 
         document.getElementById("displayHouseNo").innerText = houseNo || "-";
         document.getElementById("displayMoo").innerText = moo || "-";
 
-        // 1. ฟังก์ชันล็อกเอาท์
         document.getElementById("logoutBtn").addEventListener("click", () => {
             localStorage.clear();
             window.location.href = "index.html";
         });
 
-        // 2. ไปหน้าลงทะเบียนสัตว์เลี้ยง
         document.getElementById("addPetBtn").addEventListener("click", () => {
             window.location.href = "add-pet.html";
         });
 
-        // 3. ฟังก์ชันดึงข้อมูลสัตว์เลี้ยงจาก Firebase
         async function loadPets() {
             const petListDiv = document.getElementById("petList");
 
             try {
-                // ค้นหาสัตว์เลี้ยงที่ตรงกับ "บ้านเลขที่" และ "หมู่" นี้ และสถานะต้องไม่ใช่ตัวที่ตาย/ย้าย (Soft delete)
+                // ค้นหาเฉพาะสัตว์ที่สถานะ == active
                 const q = query(collection(db, "Pets"), 
                     where("houseNumber", "==", houseNo), 
                     where("mooNumber", "==", moo),
-                    where("status", "==", "active")
+                    where("status", "==", "active") 
                 );
                 
                 const querySnapshot = await getDocs(q);
-                petListDiv.innerHTML = ""; // ล้างคำว่า "กำลังโหลดข้อมูล..."
+                petListDiv.innerHTML = ""; 
 
                 if(querySnapshot.empty) {
                     petListDiv.innerHTML = '<p style="text-align:center; color: var(--text-muted); margin-top: 20px;">ยังไม่มีข้อมูลสัตว์เลี้ยง กดปุ่ม + ด้านล่างเพื่อเพิ่มข้อมูล</p>';
                     return;
                 }
 
-                // วนลูปสร้างการ์ดตามจำนวนสัตว์ที่เจอ
                 querySnapshot.forEach((doc) => {
                     const pet = doc.data();
+                    const petId = doc.id; // ดึง ID ของสัตว์ตัวนี้มาเพื่อใช้ทำลิงก์แก้ไข
                     
-                    // กำหนดไอคอนและป้ายสถานะ
                     const icon = pet.petType === 'แมว' ? '🐱' : '🐶';
                     const statusBadge = pet.isVaccinated 
                         ? '<span style="background: #d4edda; color: #155724; padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold;">วัคซีนแล้ว</span>' 
@@ -102,7 +96,6 @@
                     
                     const neuterText = pet.isNeutered ? "ทำหมันแล้ว" : "ยังไม่ทำหมัน";
                     
-                    // โค้ดสร้างหน้าตาการ์ดพลิก 2 ด้าน
                     const cardHTML = `
                     <div class="flip-card">
                         <div class="flip-card-inner">
@@ -112,19 +105,24 @@
                                     ${statusBadge}
                                 </div>
                                 <p class="text-muted" style="font-size: 14px; margin-top: 12px; text-align: left;">เพศ: ${pet.petType}-${pet.petGender} | สถานะ: ${neuterText}</p>
-                                <button class="btn-primary flip-btn" style="margin-top: 16px; padding: 10px;" onclick="this.closest('.flip-card').classList.toggle('flipped')">พลิกดูใบรับรองวัคซีน 🔄</button>
+                                
+                                <div style="display: flex; gap: 8px; margin-top: 16px;">
+                                    <button class="btn-primary flip-btn" style="flex: 1; padding: 10px; font-size: 14px;" onclick="this.closest('.flip-card').classList.toggle('flipped')">ดูใบรับรอง 🔄</button>
+                                    
+                                    <button class="btn-primary" style="flex: 1; padding: 10px; font-size: 14px; background-color: #e4e2e5; color: var(--primary-color);" onclick="window.location.href='edit-pet.html?id=${petId}'">อัปเดต ✏️</button>
+                                </div>
                             </div>
+
                             <div class="flip-card-back card-neumorphic cert-bg">
                                 <h4 style="color: var(--primary-color); border-bottom: 1px dashed var(--primary-color); padding-bottom: 8px;">ใบรับรองการฉีดวัคซีน</h4>
-                                <p class="text-muted" style="font-size: 14px; margin-top: 12px; text-align: left;"><strong>วันที่ฉีด:</strong> ${pet.isVaccinated ? "รอเจ้าหน้าที่ยืนยัน" : "-"}</p>
-                                <p class="text-muted" style="font-size: 14px; text-align: left;"><strong>Lot No:</strong> ${pet.isVaccinated ? "รอเจ้าหน้าที่ยืนยัน" : "-"}</p>
+                                <p class="text-muted" style="font-size: 14px; margin-top: 12px; text-align: left;"><strong>Lot No:</strong> ${pet.vaccineLot || "-"}</p>
+                                <p class="text-muted" style="font-size: 14px; text-align: left;"><strong>วันหมดอายุ:</strong> ${pet.vaccineExp || "-"}</p>
                                 <p class="text-muted" style="font-size: 12px; margin-top: 12px; text-align: left; color: #d9534f;">* กรุณานำสัตว์เลี้ยงมารับวัคซีนกระตุ้นในครั้งต่อไปตามกำหนด</p>
                                 <button class="btn-primary flip-btn" style="margin-top: auto; padding: 10px; background-color: var(--primary-color); color: white;" onclick="this.closest('.flip-card').classList.toggle('flipped')">กลับด้านหน้า ↩️</button>
                             </div>
                         </div>
                     </div>`;
                     
-                    // แทรกการ์ดลงไปในหน้าจอ
                     petListDiv.insertAdjacentHTML('beforeend', cardHTML);
                 });
 
@@ -134,9 +132,7 @@
             }
         }
 
-        // 4. สั่งให้ฟังก์ชันทำงานทันทีที่เปิดหน้านี้ขึ้นมา
         loadPets();
-
     </script>
 </body>
 </html>
