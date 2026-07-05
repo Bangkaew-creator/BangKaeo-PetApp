@@ -36,16 +36,26 @@
             <h3 class="input-label">อัปเดตประวัติวัคซีน</h3>
             <div class="checkbox-group" style="margin-bottom: 16px;">
                 <input type="checkbox" id="isVaccinated" class="checkbox-neumorphic">
-                <label for="isVaccinated" class="checkbox-label">ได้รับวัคซีนในปีนี้แล้ว</label>
+                <label for="isVaccinated" class="checkbox-label">ได้รับวัคซีนในรอบปีนี้แล้ว</label>
             </div>
 
-            <div id="vaccineDetails" style="display: none;">
+            <div id="vaccineDetails" style="display: none; background-color: #f8f9fa; padding: 16px; border-radius: 8px; border: 1px solid #d1d9e6;">
+                
                 <div class="input-group">
-                    <label class="input-label">Lot Number ของวัคซีน</label>
+                    <label class="input-label">วันที่ฉีดวัคซีน <span style="color:red;">*</span></label>
+                    <input type="date" id="vaccineDate" class="input-field">
+                </div>
+
+                <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 16px; border-bottom: 1px solid #e4e2e5; padding-bottom: 16px;">
+                    * หากทราบเฉพาะวันที่ฉีด ไม่ทราบ Lot/Exp ให้ข้าม 2 ช่องด้านล่างไปได้เลย
+                </p>
+
+                <div class="input-group">
+                    <label class="input-label">Lot Number ของวัคซีน (ถ้ามี)</label>
                     <input type="text" id="vaccineLot" class="input-field" placeholder="เช่น VAX-2026-01">
                 </div>
                 <div class="input-group">
-                    <label class="input-label">วันที่วัคซีนหมดอายุ (Exp Date)</label>
+                    <label class="input-label" style="margin-bottom: 4px;">วันที่วัคซีนหมดอายุ (Exp Date)</label>
                     <input type="date" id="vaccineExp" class="input-field">
                 </div>
             </div>
@@ -72,7 +82,6 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // ดึงรหัสสัตว์เลี้ยง (ID) จาก URL 
         const urlParams = new URLSearchParams(window.location.search);
         const petId = urlParams.get('id');
 
@@ -81,7 +90,6 @@
         const isVaccinatedCheckbox = document.getElementById("isVaccinated");
         const vaccineDetailsDiv = document.getElementById("vaccineDetails");
 
-        // ถ้าระบุ ID ไม่ได้ ให้กลับไปหน้าแรก
         if(!petId) {
             alert("ไม่พบข้อมูลสัตว์เลี้ยง");
             window.location.href = "dashboard.html";
@@ -89,12 +97,10 @@
 
         backBtn.addEventListener("click", () => window.location.href = "dashboard.html");
 
-        // แสดง/ซ่อน กล่องกรอก Lot วัคซีน
         isVaccinatedCheckbox.addEventListener("change", (e) => {
             vaccineDetailsDiv.style.display = e.target.checked ? "block" : "none";
         });
 
-        // ฟังก์ชันดึงข้อมูลสัตว์เลี้ยงตัวนี้มาแสดง
         async function loadPetData() {
             const petRef = doc(db, "Pets", petId);
             const petSnap = await getDoc(petRef);
@@ -107,20 +113,27 @@
                 if (data.isVaccinated) {
                     isVaccinatedCheckbox.checked = true;
                     vaccineDetailsDiv.style.display = "block";
+                    document.getElementById("vaccineDate").value = data.vaccineDate || "";
                     document.getElementById("vaccineLot").value = data.vaccineLot || "";
                     document.getElementById("vaccineExp").value = data.vaccineExp || "";
                 }
             }
         }
 
-        // ฟังก์ชันบันทึกข้อมูลที่แก้ไข
         saveBtn.addEventListener("click", async () => {
+            // เช็คว่าถ้าติ๊กฉีดวัคซีนแล้ว ต้องใส่วันที่ด้วย
+            if(isVaccinatedCheckbox.checked && !document.getElementById("vaccineDate").value) {
+                alert("กรุณาระบุวันที่ฉีดวัคซีนด้วยครับ (Lot และ Exp ปล่อยว่างได้)");
+                return;
+            }
+
             saveBtn.innerHTML = "กำลังอัปเดต...";
             try {
                 const petRef = doc(db, "Pets", petId);
                 await updateDoc(petRef, {
                     status: document.getElementById("petStatus").value,
                     isVaccinated: isVaccinatedCheckbox.checked,
+                    vaccineDate: isVaccinatedCheckbox.checked ? document.getElementById("vaccineDate").value : "",
                     vaccineLot: isVaccinatedCheckbox.checked ? document.getElementById("vaccineLot").value : "",
                     vaccineExp: isVaccinatedCheckbox.checked ? document.getElementById("vaccineExp").value : "",
                     lastUpdated: new Date()
@@ -135,7 +148,6 @@
             }
         });
 
-        // โหลดข้อมูลเมื่อเปิดหน้าเว็บ
         loadPetData();
     </script>
 </body>
