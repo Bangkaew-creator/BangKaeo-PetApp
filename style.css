@@ -86,8 +86,8 @@ body {
   display: flex; align-items: center; justify-content: flex-end; padding-right: 8px; border-radius: var(--radius-pill);
 }
 
-/* Flip Card & Pet Profile Redesign */
-.flip-card { background-color: transparent; width: 100%; height: 350px; perspective: 1000px; margin-bottom: 24px; }
+/* Flip Card (ลดความสูงลงเหลือ 300px ให้พอดีเนื้อหา) */
+.flip-card { background-color: transparent; width: 100%; height: 300px; perspective: 1000px; margin-bottom: 24px; }
 .flip-card-inner { position: relative; width: 100%; height: 100%; text-align: center; transition: transform 0.6s; transform-style: preserve-3d; }
 .flip-card.flipped .flip-card-inner { transform: rotateY(180deg); }
 .flip-card-front, .flip-card-back {
@@ -96,11 +96,12 @@ body {
 }
 .flip-card-back { transform: rotateY(180deg); background-color: #fdfaf0; border: 1px solid var(--secondary-color); }
 
-/* Badges & Action Buttons (จากดีไซน์ใหม่) */
+/* Badges & Action Buttons */
 .badge-pill { padding: 6px 12px; border-radius: var(--radius-pill); font-size: 12px; font-weight: 600; display: inline-flex; align-items: center; gap: 4px; }
 .badge-green { background-color: #e8f5e9; color: #2e7d32; border: 1px solid #c8e6c9; }
 .badge-yellow { background-color: #fff8e1; color: #f57f17; border: 1px solid #ffecb3; }
 .badge-red { background-color: #ffebee; color: #c62828; border: 1px solid #ffcdd2; }
+.badge-gray { background-color: #f4f4f6; color: #1b1b1e; border: 1px solid #d1d9e6; } /* เพิ่มสีเทาสำหรับประเภทสัตว์ */
 
 .btn-action-sm {
   flex: 1; padding: 10px; border-radius: 8px; border: none; font-size: 14px; font-weight: 600; cursor: pointer; transition: 0.2s;
