@@ -57,26 +57,26 @@
     </div>
 
     <script>
-        // ดึงข้อมูลที่จำไว้มาแสดง
+        // 1. ดึงข้อมูลที่จำไว้มาแสดง
         document.getElementById("displayHouseNo").innerText = localStorage.getItem("userHouseNo") || "-";
         document.getElementById("displayMoo").innerText = localStorage.getItem("userMoo") || "-";
 
-        // ฟังก์ชันล็อกเอาท์
+        // 2. ฟังก์ชันล็อกเอาท์
         document.getElementById("logoutBtn").addEventListener("click", () => {
             localStorage.clear();
             window.location.href = "index.html";
         });
 
-        // เมื่อกดปุ่ม + (FAB) ให้พาไปหน้าลงทะเบียนสัตว์เลี้ยง
-        document.getElementById("addPetBtn").addEventListener("click", () => {
-            window.location.href = "add-pet.html";
-        });
-
-        // สคริปต์สำหรับการพลิกการ์ด
+        // 3. สคริปต์สำหรับการพลิกการ์ดหน้า-หลัง
         document.querySelectorAll('.flip-btn').forEach(button => {
             button.addEventListener('click', function() {
                 this.closest('.flip-card').classList.toggle('flipped');
             });
+        });
+
+        // 4. เมื่อกดปุ่ม + (FAB) ให้พาไปหน้าลงทะเบียนสัตว์เลี้ยง
+        document.getElementById("addPetBtn").addEventListener("click", () => {
+            window.location.href = "add-pet.html";
         });
     </script>
 </body>
