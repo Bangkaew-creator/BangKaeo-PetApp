@@ -101,7 +101,7 @@
                     // 1. แยกไอคอนตามประเภทสัตว์
                     const animalIcon = pet.petType === 'แมว' ? '🐈' : '🐕';
                     
-                    // 2. ป้ายสัญลักษณ์ไอคอนเพศ (ใช้สีฟ้าสำหรับเพศผู้ สีชมพูสำหรับเพศเมีย)
+                    // 2. ป้ายสัญลักษณ์ไอคอนเพศ
                     const genderBadge = pet.petGender === 'ผู้' 
                         ? `<span class="badge-pill" style="background-color: #e3f2fd; color: #1565c0; border: 1px solid #bbdefb;">♂️ เพศผู้</span>` 
                         : `<span class="badge-pill" style="background-color: #fce4ec; color: #c2185b; border: 1px solid #f8bbd0;">♀️ เพศเมีย</span>`;
@@ -166,7 +166,10 @@
                     
                     petListDiv.insertAdjacentHTML('beforeend', cardHTML);
                 });
-            } catch (error) { petListDiv.innerHTML = '<p style="text-align:center; color: red;">เกิดข้อผิดพลาดในการโหลดข้อมูล</p>'; }
+            } catch (error) { 
+                console.error(error);
+                petListDiv.innerHTML = '<p style="text-align:center; color: red;">เกิดข้อผิดพลาดในการโหลดข้อมูล</p>'; 
+            }
         }
         loadPets();
     </script>
