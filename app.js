@@ -13,10 +13,7 @@ const firebaseConfig = {
   appId: "1:79581962937:web:1a50ce4c7fe42340cc7168"
 };
 
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-
-// 3. เริ่มต้นเปิดใช้งาน Firebase และ Database
+// 3. เริ่มต้นเปิดใช้งาน Firebase และ Database (รวมไว้ที่เดียว)
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
