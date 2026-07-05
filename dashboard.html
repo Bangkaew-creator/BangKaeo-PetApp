@@ -67,6 +67,11 @@
             window.location.href = "index.html";
         });
 
+        // เมื่อกดปุ่ม + (FAB) ให้พาไปหน้าลงทะเบียนสัตว์เลี้ยง
+        document.getElementById("addPetBtn").addEventListener("click", () => {
+            window.location.href = "add-pet.html";
+        });
+
         // สคริปต์สำหรับการพลิกการ์ด
         document.querySelectorAll('.flip-btn').forEach(button => {
             button.addEventListener('click', function() {
