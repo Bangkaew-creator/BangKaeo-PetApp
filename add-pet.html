@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>เพิ่มสัตว์เลี้ยง - ระบบลงทะเบียน</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="dashboard-container" style="padding-top: 20px;">
+        
+        <div style="display: flex; align-items: center; margin-bottom: 24px;">
+            <button id="backBtn" class="btn-primary" style="width: 50px; height: 50px; border-radius: 50%; padding: 0;">🔙</button>
+            <h2 class="title-main" style="margin-left: 16px; margin-bottom: 0;">ลงทะเบียนสัตว์เลี้ยง</h2>
+        </div>
+
+        <div class="card-neumorphic">
+            <div class="input-group">
+                <label class="input-label">ชื่อสัตว์เลี้ยง</label>
+                <input type="text" id="petName" class="input-field" placeholder="เช่น เจ้าตูบ, มอมแมม">
+            </div>
+
+            <div class="input-group">
+                <label class="input-label">ประเภท</label>
+                <select id="petType" class="input-field select-field">
+                    <option value="สุนัข">สุนัข</option>
+                    <option value="แมว">แมว</option>
+                </select>
+            </div>
+
+            <div class="input-group">
+                <label class="input-label">เพศ</label>
+                <select id="petGender" class="input-field select-field">
+                    <option value="ผู้">เพศผู้</option>
+                    <option value="เมีย">เพศเมีย</option>
+                </select>
+            </div>
+
+            <div class="checkbox-group" style="margin-bottom: 16px;">
+                <input type="checkbox" id="isNeutered" class="checkbox-neumorphic">
+                <label for="isNeutered" class="checkbox-label">ทำหมันแล้ว</label>
+            </div>
+
+            <div class="checkbox-group">
+                <input type="checkbox" id="isVaccinated" class="checkbox-neumorphic">
+                <label for="isVaccinated" class="checkbox-label">ฉีดวัคซีนแล้ว (ในรอบ 1 ปี)</label>
+            </div>
+
+            <button id="savePetBtn" class="btn-primary" style="margin-top: 16px;">
+                💾 บันทึกข้อมูล
+            </button>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+        import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+
+        // ใส่กุญแจ Firebase ของคุณตรงนี้ให้ตรงกับหน้า app.js
+        const firebaseConfig = {
+            apiKey: "AIzaSyCNsfEd11Yv2kNCO_T3s07WJ1eAXUyhssE",
+            authDomain: "bangkaew-pet-db.firebaseapp.com",
+            projectId: "bangkaew-pet-db",
+            storageBucket: "bangkaew-pet-db.firebasestorage.app",
+            messagingSenderId: "79581962937",
+            appId: "1:79581962937:web:1a50ce4c7fe42340cc7168"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // ดึงบ้านเลขที่จากหน่วยความจำ เพื่อผูกกับสัตว์เลี้ยง
+        const houseNo = localStorage.getItem("userHouseNo");
+        const moo = localStorage.getItem("userMoo");
+
+        // ปุ่มย้อนกลับ
+        document.getElementById("backBtn").addEventListener("click", () => {
+            window.location.href = "dashboard.html";
+        });
+
+        // บันทึกข้อมูล
+        document.getElementById("savePetBtn").addEventListener("click", async () => {
+            const name = document.getElementById("petName").value;
+            if(!name) { alert("กรุณาใส่ชื่อสัตว์เลี้ยงด้วยครับ"); return; }
+
+            const btn = document.getElementById("savePetBtn");
+            btn.innerHTML = "กำลังบันทึก...";
+
+            try {
+                // ส่งข้อมูลไปสร้าง Collection ใหม่ชื่อ "Pets"
+                await addDoc(collection(db, "Pets"), {
+                    houseNumber: houseNo,
+                    mooNumber: moo,
+                    petName: name,
+                    petType: document.getElementById("petType").value,
+                    petGender: document.getElementById("petGender").value,
+                    isNeutered: document.getElementById("isNeutered").checked,
+                    isVaccinated: document.getElementById("isVaccinated").checked,
+                    status: "active", // รองรับระบบ Soft Delete ในอนาคต
+                    createdAt: new Date()
+                });
+                
+                alert("✅ บันทึกข้อมูลสัตว์เลี้ยงสำเร็จ!");
+                window.location.href = "dashboard.html"; // กลับไปหน้าแดชบอร์ด
+
+            } catch (e) {
+                console.error(e);
+                alert("❌ เกิดข้อผิดพลาด: " + e.message);
+                btn.innerHTML = "💾 บันทึกข้อมูล";
+            }
+        });
+    </script>
+</body>
+</html>
