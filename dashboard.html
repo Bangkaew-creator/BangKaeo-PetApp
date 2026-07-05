@@ -66,11 +66,30 @@
             window.location.href = "add-pet.html";
         });
 
+        // ฟังก์ชันอัจฉริยะ แปลงวันที่เป็น พ.ศ. เสมอ
+        function formatThaiDate(dateStr) {
+            if (!dateStr) return "ไม่ระบุ";
+            
+            // dateStr ปกติจะมาในรูปแบบ YYYY-MM-DD
+            let parts = dateStr.split('-');
+            if (parts.length === 3) {
+                let year = parseInt(parts[0]);
+                let month = parts[1];
+                let day = parts[2];
+                
+                // ถ้าปีน้อยกว่า 2400 (แปลว่าเป็น ค.ศ.) ให้บวก 543
+                if (year < 2400) {
+                    year += 543;
+                }
+                return `${day}/${month}/${year}`;
+            }
+            return dateStr;
+        }
+
         async function loadPets() {
             const petListDiv = document.getElementById("petList");
 
             try {
-                // ค้นหาเฉพาะสัตว์ที่สถานะ == active
                 const q = query(collection(db, "Pets"), 
                     where("houseNumber", "==", houseNo), 
                     where("mooNumber", "==", moo),
@@ -87,7 +106,7 @@
 
                 querySnapshot.forEach((doc) => {
                     const pet = doc.data();
-                    const petId = doc.id; // ดึง ID ของสัตว์ตัวนี้มาเพื่อใช้ทำลิงก์แก้ไข
+                    const petId = doc.id;
                     
                     const icon = pet.petType === 'แมว' ? '🐱' : '🐶';
                     const statusBadge = pet.isVaccinated 
@@ -95,6 +114,17 @@
                         : '<span style="background: #f8d7da; color: #721c24; padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold;">ยังไม่วัคซีน</span>';
                     
                     const neuterText = pet.isNeutered ? "ทำหมันแล้ว" : "ยังไม่ทำหมัน";
+                    
+                    // จัดการตัวแปรแสดงผลใบรับรอง
+                    let displayVacDate = "-";
+                    let displayVacLot = "-";
+                    let displayVacExp = "-";
+
+                    if(pet.isVaccinated) {
+                        displayVacDate = formatThaiDate(pet.vaccineDate);
+                        displayVacLot = pet.vaccineLot ? pet.vaccineLot : "ไม่ระบุ (ฉีดจากคลินิก)";
+                        displayVacExp = pet.vaccineExp ? formatThaiDate(pet.vaccineExp) : "ไม่ระบุ";
+                    }
                     
                     const cardHTML = `
                     <div class="flip-card">
@@ -108,15 +138,16 @@
                                 
                                 <div style="display: flex; gap: 8px; margin-top: 16px;">
                                     <button class="btn-primary flip-btn" style="flex: 1; padding: 10px; font-size: 14px;" onclick="this.closest('.flip-card').classList.toggle('flipped')">ดูใบรับรอง 🔄</button>
-                                    
                                     <button class="btn-primary" style="flex: 1; padding: 10px; font-size: 14px; background-color: #e4e2e5; color: var(--primary-color);" onclick="window.location.href='edit-pet.html?id=${petId}'">อัปเดต ✏️</button>
                                 </div>
                             </div>
 
                             <div class="flip-card-back card-neumorphic cert-bg">
                                 <h4 style="color: var(--primary-color); border-bottom: 1px dashed var(--primary-color); padding-bottom: 8px;">ใบรับรองการฉีดวัคซีน</h4>
-                                <p class="text-muted" style="font-size: 14px; margin-top: 12px; text-align: left;"><strong>Lot No:</strong> ${pet.vaccineLot || "-"}</p>
-                                <p class="text-muted" style="font-size: 14px; text-align: left;"><strong>วันหมดอายุ:</strong> ${pet.vaccineExp || "-"}</p>
+                                <p class="text-muted" style="font-size: 14px; margin-top: 12px; text-align: left;"><strong>วันที่ฉีด:</strong> ${displayVacDate}</p>
+                                <p class="text-muted" style="font-size: 14px; text-align: left;"><strong>Lot No:</strong> <span style="font-size: 12px;">${displayVacLot}</span></p>
+                                <p class="text-muted" style="font-size: 14px; text-align: left;"><strong>วันหมดอายุ:</strong> ${displayVacExp}</p>
+                                
                                 <p class="text-muted" style="font-size: 12px; margin-top: 12px; text-align: left; color: #d9534f;">* กรุณานำสัตว์เลี้ยงมารับวัคซีนกระตุ้นในครั้งต่อไปตามกำหนด</p>
                                 <button class="btn-primary flip-btn" style="margin-top: auto; padding: 10px; background-color: var(--primary-color); color: white;" onclick="this.closest('.flip-card').classList.toggle('flipped')">กลับด้านหน้า ↩️</button>
                             </div>
