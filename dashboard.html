@@ -1,4 +1,3 @@
-<!-- dashboard.html -->
 <!DOCTYPE html>
 <html lang="th">
 <head>
@@ -15,7 +14,6 @@
             <button id="logoutBtn" class="btn-primary" style="width: auto; padding: 8px 12px; font-size: 12px; background-color: #ffebee; color: #c62828; border: 1px solid #ffcdd2;">ออกระบบ</button>
         </header>
 
-        <!-- โปรไฟล์เจ้าของ (โครงสร้างจำลองรอเชื่อม LINE LIFF) -->
         <div class="card-neumorphic" style="margin-bottom: 24px; padding: 20px; display: flex; align-items: center; gap: 16px;">
             <img src="https://cdn-icons-png.flaticon.com/512/847/847969.png" alt="LINE Profile" style="width: 65px; height: 65px; border-radius: 50%; box-shadow: var(--shadow-extruded); object-fit: cover;">
             <div>
@@ -26,7 +24,6 @@
             </div>
         </div>
 
-        <!-- แถบความคืบหน้า -->
         <div class="card-neumorphic" style="margin-bottom: 24px; padding: 20px;">
             <h3 class="input-label">สัดส่วนวัคซีนในหมู่บ้าน (เป้าหมาย 80%)</h3>
             <div class="progress-track">
@@ -101,12 +98,19 @@
                     const pet = doc.data();
                     const petId = doc.id;
                     
-                    const icon = pet.petType === 'แมว' ? '🐈' : '🐕';
-                    const genderIcon = pet.petGender === 'ผู้' ? '♂️' : '♀️';
+                    // 1. แยกไอคอนตามประเภทสัตว์
+                    const animalIcon = pet.petType === 'แมว' ? '🐈' : '🐕';
                     
+                    // 2. ป้ายสัญลักษณ์ไอคอนเพศ (ใช้สีฟ้าสำหรับเพศผู้ สีชมพูสำหรับเพศเมีย)
+                    const genderBadge = pet.petGender === 'ผู้' 
+                        ? `<span class="badge-pill" style="background-color: #e3f2fd; color: #1565c0; border: 1px solid #bbdefb;">♂️ เพศผู้</span>` 
+                        : `<span class="badge-pill" style="background-color: #fce4ec; color: #c2185b; border: 1px solid #f8bbd0;">♀️ เพศเมีย</span>`;
+                    
+                    // 3. ป้ายสถานะวัคซีนและการทำหมัน
                     const vaxBadge = pet.isVaccinated 
                         ? `<span class="badge-pill badge-green">💉 เคยฉีด</span>` 
                         : `<span class="badge-pill badge-red">⚠️ ยังไม่ฉีด</span>`;
+                    
                     const neuterBadge = pet.isNeutered 
                         ? `<span class="badge-pill badge-green">✂️ ทำหมันแล้ว</span>` 
                         : `<span class="badge-pill badge-yellow">🎀 ยังไม่ทำหมัน</span>`;
@@ -126,15 +130,15 @@
                     const cardHTML = `
                     <div class="flip-card">
                         <div class="flip-card-inner">
-                            <!-- ด้านหน้า (ดีไซน์ใหม่) -->
                             <div class="flip-card-front">
-                                <div style="width: 80px; height: 80px; margin: 0 auto 16px; background-color: var(--bg-color); border-radius: 50%; box-shadow: var(--shadow-extruded); display: flex; align-items: center; justify-content: center; font-size: 36px; border: 4px solid white;">
-                                    ${icon}
+                                <div style="width: 80px; height: 80px; margin: 0 auto 12px; background-color: var(--bg-color); border-radius: 50%; box-shadow: var(--shadow-extruded); display: flex; align-items: center; justify-content: center; font-size: 36px; border: 4px solid white;">
+                                    ${animalIcon}
                                 </div>
-                                <h4 style="color: var(--primary-color); font-size: 22px; margin-bottom: 4px;">${pet.petName}</h4>
-                                <p class="text-muted" style="font-size: 14px; margin-bottom: 16px;">${pet.petType} | ${pet.petGender} ${genderIcon}</p>
                                 
-                                <div style="display: flex; justify-content: center; gap: 8px; margin-bottom: 24px;">
+                                <h4 style="color: var(--primary-color); font-size: 22px; margin-bottom: 12px;">${pet.petName}</h4>
+                                
+                                <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; margin-bottom: 20px;">
+                                    ${genderBadge}
                                     ${vaxBadge}
                                     ${neuterBadge}
                                 </div>
@@ -147,7 +151,6 @@
                                 </div>
                             </div>
 
-                            <!-- ด้านหลัง (ใบรับรองวัคซีน) -->
                             <div class="flip-card-back cert-bg">
                                 <h4 style="color: var(--primary-color); border-bottom: 1px dashed var(--primary-color); padding-bottom: 8px; font-size: 18px;">ใบรับรองการฉีดวัคซีน</h4>
                                 <p class="text-muted" style="font-size: 14px; margin-top: 12px; text-align: left;"><strong>วันที่ฉีด:</strong> ${displayVacDate}</p>
